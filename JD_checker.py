@@ -1,11 +1,12 @@
 import streamlit as st
-from service import extract_text, clean_text, section_clean, compute_similarity, section_maker
+from service import  extract_text, clean_text, section_clean, compute_similarity, section_maker
 from service import resume_weight, ai_feedback, normalize_skills, section_map , text_jd
+
 
 
 st.title("Resume Screening System (ATS Prototype)")
 
-resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"] , accept_multiple_files=True)
+resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"] )
 jd_input = st.text_area("Paste Job Description",height=250)
 button = st.button("upload")
 

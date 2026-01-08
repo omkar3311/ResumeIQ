@@ -26,6 +26,10 @@ def clean_text(text):
     cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
     return cleaned_text
 
+def section_clean(section):
+    for key, value in sections.items():
+        sections[key] = clean(" ".join(value))
+    return section
 def compute_similarity(resume, jd):
     vectorizer = TfidfVectorizer()
     vectors = vectorizer.fit_transform([resume, jd])
@@ -79,3 +83,5 @@ resume_text = extract_text(resume_file)
 resume_section = section_maker(resume_text,section_map)
 jd_section = section_maker(jd_input,section_map)
 
+clean_resume = section_clean(resume_section)
+clean_jd = section_clean(jd_section)

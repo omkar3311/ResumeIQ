@@ -147,3 +147,14 @@ missing = jd_skills - resume_skills
 
 skills_score = compute_similarity(resume_skills, jd_skills)
 final_score = (0.6 * skills_score) + (0.4 * overall_score)
+
+st.subheader("📊 Similarity Scores")
+st.metric("Overall Resume Match", f"{overall_score*100:.2f}%")
+st.metric("Skills Match", f"{skills_score*100:.2f}%")
+st.metric("Final ATS Score", f"{final_score*100:.2f}%")
+
+verdict, feedback = feedback(overall_score, skills_score, matched, missing)
+
+st.subheader("🤖 AI Evaluation")
+st.success(verdict)
+st.write(feedback)

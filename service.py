@@ -83,20 +83,16 @@ def ai_feedback(overall, skills, matched, missing):
         verdict = "Weak Match"
         color = "red"
         tone = "Your resume currently lacks several key requirements."
-
-    feedback_text = f"""
-        {tone}
-
-        🔍 **Skill Analysis**
-        - Matched skills: {len(matched)}
-        - Missing skills: {len(missing)}
-
-        📌 **Recommended Improvements**
-        """
+    feedback_text = ""
+    feedback_text += f"\n{tone}\n"
+    feedback_text += "\n🔍 **Skill Analysis**\n"
+    feedback_text += f"\n- Matched skills: {len(matched)}"
+    feedback_text += f"\n- Missing skills: {len(missing)}\n"
+    
 
     if missing:
-        feedback_text += "\n📌 **Recommended Skills to Improve or Highlight:**\n"
-        feedback_text += "\n".join([f"• {skill}" for skill in sorted(missing)])
+        feedback_text += "\n📌 **Recommended Skills to Improve or Highlight:**\n\n"
+        feedback_text += "\n".join([f"• {skill}  " for skill in sorted(missing)])
     else:
         feedback_text += "\n📌 **Excellent** — no critical skills missing."
 

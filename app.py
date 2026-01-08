@@ -25,3 +25,8 @@ def clean_text(text):
     text = re.sub(r"[^a-z0-9\s]", " ", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
+
+def compute_similarity(resume, jd):
+    vectorizer = TfidfVectorizer()
+    vectors = vectorizer.fit_transform([resume, jd])
+    return cosine_similarity(vectors[0], vectors[1])[0][0]

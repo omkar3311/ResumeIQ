@@ -130,3 +130,64 @@ section_map = {
     "awards": "achievements",
     "certifications": "certifications"
 }
+
+def has_email(text):
+    return re.search(r"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}", text)
+
+def has_phone(text):
+    return re.search(r"\b\d{10}\b", text)
+
+def has_experience(text):
+    return "experience" in text or "internship" in text
+
+def graduation_year(text):
+    years = re.findall(r"(20\d{2})", text)
+    return max(map(int, years)) if years else None
+
+
+def count_projects(project_lines):
+    if not project_lines:
+        return 0
+
+    project_count = 0
+    current_project_lines = []
+    detected_titles = 0
+    bullet_blocks = 0
+
+    def looks_like_title(line):
+        return (
+            2 <= len(line.split()) <= 10
+            and not line.endswith(".")
+            and not line.lower().startswith(
+                ("tech", "tools", "description", "responsibilities")
+            )
+        )
+
+    for i, line in enumerate(project_lines):
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if re.match(r"^\d+\.", line):
+            detected_titles += 1
+            continue
+
+        if "|" in line or ":" in line:
+            detected_titles += 1
+            continue
+
+        if looks_like_title(line):
+            detected_titles += 1
+            continue
+
+        if re.match(r"^[•\-*]", line):
+            bullet_blocks += 1
+
+    if detected_titles > 0:
+        project_count = detected_titles
+    elif bullet_blocks >= 2:
+        project_count = max(1, bullet_blocks // 2)
+    else:
+        project_count = 0
+    return min(project_count, 5)  

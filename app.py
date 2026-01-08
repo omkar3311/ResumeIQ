@@ -26,7 +26,7 @@ def clean_text(text):
     cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
     return cleaned_text
 
-def section_clean(section):
+def section_clean(sections):
     for key, value in sections.items():
         sections[key] = clean(" ".join(value))
     return section
@@ -49,6 +49,18 @@ def section_maker(text,section_map):
         elif current_section:
             sections[current_section].append(line.strip())
     return sections
+
+def resume_weight(sections):
+    skills = sections.get("skills", []) 
+    experience = sections.get("experience", [])
+    projects = sections.get("projects", [])
+    education = sections.get("education", [])
+    resume_text = "".join(
+        (skills + " " ) * 3 +
+        (experience + " " )  * 2 +
+        (projects + " " )  * 2 +
+        education)
+    return resume_text
 
 section_map = {
     "objective": "objective",
@@ -85,3 +97,5 @@ jd_section = section_maker(jd_input,section_map)
 
 clean_resume = section_clean(resume_section)
 clean_jd = section_clean(jd_section)
+
+wt_resume = resume_weight(clean_resume)

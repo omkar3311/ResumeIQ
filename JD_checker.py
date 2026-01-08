@@ -5,7 +5,7 @@ from service import resume_weight, ai_feedback, normalize_skills, section_map , 
 
 st.title("Resume Screening System (ATS Prototype)")
 
-resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"])
+resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"] , accept_multiple_files=True)
 jd_input = st.text_area("Paste Job Description",height=250)
 button = st.button("upload")
 

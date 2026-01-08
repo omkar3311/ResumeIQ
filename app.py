@@ -30,3 +30,14 @@ def compute_similarity(resume, jd):
     vectorizer = TfidfVectorizer()
     vectors = vectorizer.fit_transform([resume, jd])
     return cosine_similarity(vectors[0], vectors[1])[0][0]
+
+st.title("Resume Screening System (ATS Prototype)")
+
+resume_file = st.file_uploader(
+    "Upload Resume (PDF or DOCX)", type=["pdf", "docx"]
+)
+
+jd_input = st.text_area(
+    "Paste Job Description",
+    height=250
+)

@@ -1,5 +1,5 @@
 import streamlit as st
-from service import extract_text,section_map,count_projects, section_maker, has_email, has_phone, graduation_year, has_experience, has_objective
+from service import extract_text,section_map,count_projects, section_maker, has_email, has_phone, graduation_year, has_experience
 
 def ats_score(resume_text, sections):
     feedback = []

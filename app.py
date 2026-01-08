@@ -21,10 +21,10 @@ def extract_text(file):
     return ""
 
 def clean_text(text):
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
+    cleaned_text = re.sub(r'[•▪◦–—*]', '', text)
+    cleaned_text = re.sub(r'page \d+ of \d+', '', cleaned_text, flags=re.I)
+    cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
+    return cleaned_text
 
 def compute_similarity(resume, jd):
     vectorizer = TfidfVectorizer()

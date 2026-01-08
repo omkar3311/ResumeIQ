@@ -72,31 +72,36 @@ def text_jd(sections):
 
 def ai_feedback(overall, skills, matched, missing):
     if skills >= 0.75:
-        verdict = "Strong match"
-        tone = "You are a strong fit for this role."
+        verdict = "Strong Match"
+        color = "green"
+        tone = "Your resume strongly aligns with this role."
     elif skills >= 0.5:
-        verdict = "Moderate match"
-        tone = "You match many requirements, but there are noticeable gaps."
+        verdict = "Moderate Match"
+        color = "orange"
+        tone = "You meet many requirements, but some skills are missing."
     else:
-        verdict = "Weak match"
-        tone = "Your resume does not strongly align with this job yet."
+        verdict = "Weak Match"
+        color = "red"
+        tone = "Your resume currently lacks several key requirements."
 
-    feedback = f"""
-    {tone}
+    feedback_text = f"""
+        {tone}
 
-    🔍 **Skill Match Analysis**
-    - Matched skills: {len(matched)}
-    - Missing skills: {len(missing)}
+        🔍 **Skill Analysis**
+        - Matched skills: {len(matched)}
+        - Missing skills: {len(missing)}
 
-    📌 **What you should improve**
-    """
+        📌 **Recommended Improvements**
+        """
 
     if missing:
-        feedback += "\n".join([f"- Learn or highlight **{skill}**" for skill in missing])
+        feedback_text += "\n📌 **Recommended Skills to Improve or Highlight:**\n"
+        feedback_text += "\n".join([f"• {skill}" for skill in sorted(missing)])
     else:
-        feedback += "\n- Your skills align very well with this JD."
+        feedback_text += "\n📌 **Excellent** — no critical skills missing."
 
-    return verdict, feedback
+    return verdict, color, feedback_text
+
 
 def normalize_skills(text):
     text = text.lower()
@@ -154,8 +159,8 @@ if button and resume_file and jd_input.strip():
     resume_skills_text = clean_resume.get("skills", "")
     jd_skills_text = clean_jd.get("skills", "")
 
-    resume_skills = set(resume_skills_text.lower().split())
-    jd_skills = set(jd_skills_text.lower().split())
+    resume_skills = normalize_skills(resume_skills_text)
+    jd_skills = normalize_skills(jd_skills_text)
 
     matched = resume_skills & jd_skills
     missing = jd_skills - resume_skills
@@ -176,11 +181,17 @@ if button and resume_file and jd_input.strip():
     with col3:
         st.metric("Final ATS Score", f"{final_score*100:.2f}%")
 
-    verdict, feedback_text = ai_feedback(
-        overall_score, skills_score, matched, missing
+    verdict, color, feedback_text = ai_feedback(
+    overall_score, skills_score, matched, missing
     )
 
     st.subheader("🤖 AI Evaluation")
-    st.success(verdict)
-    st.write(feedback_text)
 
+    if color == "green":
+        st.success(verdict)
+    elif color == "orange":
+        st.warning(verdict)
+    else:
+        st.error(verdict)
+
+    st.write(feedback_text)

@@ -46,18 +46,6 @@ def section_maker(text,section_map):
             sections[current_section].append(line.strip())
     return sections
 
-
-st.title("Resume Screening System (ATS Prototype)")
-
-resume_file = st.file_uploader(
-    "Upload Resume (PDF or DOCX)", type=["pdf", "docx"]
-)
-
-jd_input = st.text_area(
-    "Paste Job Description",
-    height=250
-)
-
 section_map = {
     "objective": "objective",
     "summary": "objective",
@@ -80,4 +68,14 @@ section_map = {
     "awards": "achievements",
     "certifications": "certifications"
 }
+
+st.title("Resume Screening System (ATS Prototype)")
+
+resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"])
+jd_input = st.text_area("Paste Job Description",height=250)
+
+resume_text = extract_text(resume_file)
+
+resume_section = section_maker(resume_text,section_map)
+jd_section = section_maker(jd_input,section_map)
 

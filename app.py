@@ -28,8 +28,8 @@ def clean_text(text):
 
 def section_clean(sections):
     for key, value in sections.items():
-        sections[key] = clean(" ".join(value))
-    return section
+        sections[key] = clean_text(" ".join(value))
+    return sections
 def compute_similarity(resume, jd):
     vectorizer = TfidfVectorizer()
     vectors = vectorizer.fit_transform([resume, jd])
@@ -70,7 +70,7 @@ def text_jd(sections):
         text = text + value + " "
     return text
 
-def feedback(overall, skills, matched, missing):
+def ai_feedback(overall, skills, matched, missing):
     if skills >= 0.75:
         verdict = "Strong match"
         tone = "You are a strong fit for this role."
@@ -97,6 +97,14 @@ def feedback(overall, skills, matched, missing):
         feedback += "\n- Your skills align very well with this JD."
 
     return verdict, feedback
+
+def normalize_skills(text):
+    text = text.lower()
+    text = re.sub(r"[()\[\]{}/]", " ", text)
+    text = re.sub(r"[^a-z0-9+.#\- ]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    skills = set(skill.strip() for skill in text.split() if len(skill) > 2)
+    return skills
 
 
 section_map = {
@@ -126,35 +134,53 @@ st.title("Resume Screening System (ATS Prototype)")
 
 resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"])
 jd_input = st.text_area("Paste Job Description",height=250)
+button = st.button("upload")
 
-resume_text = extract_text(resume_file)
+if button and resume_file and jd_input.strip():
 
-resume_section = section_maker(resume_text,section_map)
-jd_section = section_maker(jd_input,section_map)
+    resume_text = extract_text(resume_file)
 
-clean_resume = section_clean(resume_section)
-clean_jd = section_clean(jd_section)
+    resume_section = section_maker(resume_text, section_map)
+    jd_section = section_maker(jd_input, section_map)
 
-wt_resume = resume_weight(clean_resume)
-jd_text = text_jd(clean_jd)
+    clean_resume = section_clean(resume_section)
+    clean_jd = section_clean(jd_section)
 
-overall_score = compute_similarity(wt_resume,jd_text)
+    wt_resume = resume_weight(clean_resume)
+    jd_text = text_jd(clean_jd)
 
-resume_skills = set(s.lower() for s in clean_resume['skills'])
-jd_skills = set(s.lower() for s in clean_jd['skills'])
-matched = resume_skills & jd_skills
-missing = jd_skills - resume_skills
+    overall_score = compute_similarity(wt_resume, jd_text)
 
-skills_score = compute_similarity(resume_skills, jd_skills)
-final_score = (0.6 * skills_score) + (0.4 * overall_score)
+    resume_skills_text = clean_resume.get("skills", "")
+    jd_skills_text = clean_jd.get("skills", "")
 
-st.subheader("📊 Similarity Scores")
-st.metric("Overall Resume Match", f"{overall_score*100:.2f}%")
-st.metric("Skills Match", f"{skills_score*100:.2f}%")
-st.metric("Final ATS Score", f"{final_score*100:.2f}%")
+    resume_skills = set(resume_skills_text.lower().split())
+    jd_skills = set(jd_skills_text.lower().split())
 
-verdict, feedback = feedback(overall_score, skills_score, matched, missing)
+    matched = resume_skills & jd_skills
+    missing = jd_skills - resume_skills
 
-st.subheader("🤖 AI Evaluation")
-st.success(verdict)
-st.write(feedback)
+    skills_score = (
+        compute_similarity(resume_skills_text, jd_skills_text)
+        if resume_skills_text and jd_skills_text else 0.0
+    )
+
+    final_score = (0.6 * skills_score) + (0.4 * overall_score)
+
+    st.subheader("📊 Similarity Scores")
+    col1,col2,col3 = st.columns(3)
+    with col1:
+        st.metric("Overall Resume Match", f"{overall_score*100:.2f}%")
+    with col2:
+        st.metric("Skills Match", f"{skills_score*100:.2f}%")
+    with col3:
+        st.metric("Final ATS Score", f"{final_score*100:.2f}%")
+
+    verdict, feedback_text = ai_feedback(
+        overall_score, skills_score, matched, missing
+    )
+
+    st.subheader("🤖 AI Evaluation")
+    st.success(verdict)
+    st.write(feedback_text)
+

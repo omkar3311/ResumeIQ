@@ -54,13 +54,21 @@ def resume_weight(sections):
     skills = sections.get("skills", []) 
     experience = sections.get("experience", [])
     projects = sections.get("projects", [])
+    objective = sections.get("objective", [])
     education = sections.get("education", [])
     resume_text = "".join(
         (skills + " " ) * 3 +
         (experience + " " )  * 2 +
         (projects + " " )  * 2 +
+        objective +
         education)
     return resume_text
+
+def text_jd(sections):
+    text =""
+    for key, value in sections.items():
+        text = text + value + " "
+    return text
 
 section_map = {
     "objective": "objective",
@@ -99,3 +107,6 @@ clean_resume = section_clean(resume_section)
 clean_jd = section_clean(jd_section)
 
 wt_resume = resume_weight(clean_resume)
+jd_text = text_jd(clean_jd)
+
+cosine_score = compute_similarity(wt_resume,jd_text)

@@ -41,3 +41,27 @@ jd_input = st.text_area(
     "Paste Job Description",
     height=250
 )
+
+section_map = {
+    "objective": "objective",
+    "summary": "objective",
+
+    "experience": "experience",
+    "work experience": "experience",
+    "professional experience": "experience",
+    "internships": "experience",
+
+    "projects": "projects",
+    "academic projects": "projects",
+    
+    "required skills": "skills",
+    "preferred skills": "skills",
+    "skills": "skills",
+    "technical skills": "skills",
+
+    "education": "education",
+    "awards": "awards",
+    "awards": "achievements",
+    "certifications": "certifications"
+}
+

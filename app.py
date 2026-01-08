@@ -110,3 +110,8 @@ wt_resume = resume_weight(clean_resume)
 jd_text = text_jd(clean_jd)
 
 cosine_score = compute_similarity(wt_resume,jd_text)
+
+resume_skills = set(s.lower() for s in clean_resume['skills'])
+jd_skills = set(s.lower() for s in clean_jd['skills'])
+matched = resume_skills & jd_skills
+missing = jd_skills - resume_skills

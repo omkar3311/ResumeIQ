@@ -70,6 +70,35 @@ def text_jd(sections):
         text = text + value + " "
     return text
 
+def feedback(overall, skills, matched, missing):
+    if skills >= 0.75:
+        verdict = "Strong match"
+        tone = "You are a strong fit for this role."
+    elif skills >= 0.5:
+        verdict = "Moderate match"
+        tone = "You match many requirements, but there are noticeable gaps."
+    else:
+        verdict = "Weak match"
+        tone = "Your resume does not strongly align with this job yet."
+
+    feedback = f"""
+    {tone}
+
+    🔍 **Skill Match Analysis**
+    - Matched skills: {len(matched)}
+    - Missing skills: {len(missing)}
+
+    📌 **What you should improve**
+    """
+
+    if missing:
+        feedback += "\n".join([f"- Learn or highlight **{skill}**" for skill in missing])
+    else:
+        feedback += "\n- Your skills align very well with this JD."
+
+    return verdict, feedback
+
+
 section_map = {
     "objective": "objective",
     "summary": "objective",

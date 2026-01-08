@@ -31,6 +31,22 @@ def compute_similarity(resume, jd):
     vectors = vectorizer.fit_transform([resume, jd])
     return cosine_similarity(vectors[0], vectors[1])[0][0]
 
+def section_maker(text,section_map):
+    lines = text.splitlines()
+    sections = {}
+    current_section = None
+    
+    for line in lines:
+        line_clean = line.strip().lower()
+        if line_clean in section_map:
+            current_section = section_map[line_clean]
+            if current_section not in sections:
+                sections[current_section] = []
+        elif current_section:
+            sections[current_section].append(line.strip())
+    return sections
+
+
 st.title("Resume Screening System (ATS Prototype)")
 
 resume_file = st.file_uploader(

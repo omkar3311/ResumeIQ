@@ -5,6 +5,11 @@ def ats_score(resume_text, sections):
     feedback = []
     score = 0
 
+    if not sections or len(sections.keys()) == 0:
+        return 0, [
+            "No resume sections detected. Please structure your resume with clear headings like Skills, Projects, Education, and Experience."
+        ]
+
     if has_email(resume_text):
         score += 5
     else:
@@ -15,71 +20,74 @@ def ats_score(resume_text, sections):
     else:
         feedback.append("Add a valid mobile number.")
 
-    if "skills" in sections and len(sections["skills"]) > 0:
-        score += 12
-        skill_count = len([s for s in sections["skills"] if len(s.strip()) > 1])
-        if skill_count >= 10:
-            score += 8
-        elif skill_count >= 5:
-            score += 5
-        else:
-            feedback.append("Add more technical skills to strengthen your profile.")
+    if sections.get("skills"):
+        score += 20
     else:
         feedback.append("Skills section is missing.")
 
-    if "projects" in sections and len(sections["projects"]) > 0:
-        score += 10
+    if sections.get("projects"):
+        score += 15
         project_count = count_projects(sections["projects"])
+
         if project_count >= 3:
             score += 10
         elif project_count == 2:
             score += 7
-            feedback.append("Add one more project for a stronger profile.")
         elif project_count == 1:
             score += 4
-            feedback.append("Try to include 2–3 well-described projects.")
         else:
             score += 5
     else:
         feedback.append("Projects section not found.")
 
-    grad_year = graduation_year(resume_text)
-    if grad_year:
+    if graduation_year(resume_text):
         score += 15
     else:
         feedback.append("Mention your graduation year clearly.")
 
-    if "experience" in sections and len(sections["experience"]) > 0:
-        score += 12
+    if sections.get("experience"):
+        score += 15
         if has_experience(resume_text):
             score += 8
-        else:
-            feedback.append("Experience section detected but details are weak.")
     else:
         score += 5
         feedback.append("No experience section found.")
 
-    if "objective" in sections and sections["objective"]:
+    if sections.get("objective"):
         score += 5
-    else:
-        feedback.append("Add a short career objective or professional summary.")
 
-    detected_sections = sum(
-        1 for s in ["skills", "projects", "education", "experience", "objective"]
-        if s in sections
-    )
-
-    if detected_sections >= 3:
-        score += 10
-    else:
-        score += 5
-        feedback.append("Resume structure is weak. Use clear section headings.")
+    structure_feedback, detected_sections, missing_sections = evaluate_resume_structure(sections)
+    feedback.extend(structure_feedback)
 
     return min(score, 100), feedback
 
 
-st.title("📄 ATS Resume Checker (Rule-Based)")
+def evaluate_resume_structure(sections):
+    feedback = []
 
+    expected_sections = ["skills", "projects", "education", "experience", "objective"]
+    detected_sections = list(sections.keys())
+    missing_sections = [s for s in expected_sections if s not in detected_sections]
+
+    if len(missing_sections) >= 3:
+        feedback.append(
+            "Resume structure is very weak. Missing multiple essential sections: "
+            + ", ".join(missing_sections)
+        )
+    elif missing_sections:
+        feedback.append(
+            "Resume structure can be improved. Missing sections: "
+            + ", ".join(missing_sections)
+        )
+
+    return feedback, detected_sections, missing_sections
+
+
+st.title("📄 ATS Resume Checker (Rule-Based)")
+st.caption(
+    "Note: This ATS analysis is based on automated parsing. In some cases, well-formatted information "
+    "may not be detected due to layout, styling, or section naming differences."
+)
 resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"])
 if resume_file :
     resume_text = extract_text(resume_file)
@@ -88,7 +96,8 @@ if resume_file :
         sections = section_maker(resume_text, section_map)
         project_lines = sections.get("projects", [])
         project_count = count_projects(project_lines)
-        st.write(project_count)
+    
+        
         final_score, feedback = ats_score(resume_text,sections)
 
         st.subheader("📊 ATS Score")
@@ -100,10 +109,14 @@ if resume_file :
             st.warning("Good resume, but needs improvements")
         else:
             st.error("Resume needs major improvements")
-
+        st.write("Present Sections")
+        st.write(sections.keys())
         if feedback:
             st.subheader("🛠 Improvement Suggestions")
             for f in feedback:
                 st.write("•", f)
+            st.warning(
+        "If the above-mentioned sections are present in your resume but still flagged as missing, "
+        "this indicates a formatting or structuring issue that may prevent ATS systems from correctly reading your content.")
         else:
             st.success("No major issues detected. Your resume is ATS-friendly.")

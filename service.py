@@ -57,11 +57,11 @@ def resume_weight(sections):
     objective = sections.get("objective", [])
     education = sections.get("education", [])
     resume_text = "".join(
-        (skills + " " ) * 3 +
-        (experience + " " )  * 2 +
-        (projects + " " )  * 2 +
-        objective +
-        education)
+        (" ".join(skills) + " ") * 3 +
+        (" ".join(experience) + " ") * 2 +
+        (" ".join(projects) + " ") * 2 +
+        " ".join(objective) + " " +
+        " ".join(education))
     return resume_text
 
 def text_jd(sections):

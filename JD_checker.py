@@ -99,3 +99,8 @@ if button and resume_files and jd_input.strip():
             resume_skills[name] = sections.get("skills", "")
         st.write(resume_skills)
         jd_skills_text = clean_jd.get("skills", "")
+        
+        skill_score = {}
+        for name , skill in resume_skills.items():
+            skill_score[name] = compute_similarity(skill, jd_skills_text) if skill and jd_skills_text else 0.0
+        st.write(skill_score)

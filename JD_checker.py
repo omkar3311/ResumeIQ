@@ -64,3 +64,9 @@ if button and resume_files and jd_input.strip():
             st.error(verdict)
 
         st.write(feedback_text)
+    else :
+        resume_text = {}
+        for resume_file in resume_files:
+            text = extract_text(resume_file)
+            resume_text[resume_file.name] = text
+        st.write(resume_text.keys())

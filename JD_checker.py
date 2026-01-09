@@ -93,4 +93,9 @@ if button and resume_files and jd_input.strip():
         overall_score = {}
         for name , resume in wt_resume.items():
             overall_score[name] = compute_similarity(resume, jd_text)
-        st.write(overall_score)
+        
+        resume_skills = {}
+        for name , sections in resume_clean.items():
+            resume_skills[name] = sections.get("skills", "")
+        st.write(resume_skills)
+        jd_skills_text = clean_jd.get("skills", "")

@@ -88,4 +88,9 @@ if button and resume_files and jd_input.strip():
                 else:
                     sections_dict[key] = value
             wt_resume[name] = resume_weight(sections_dict)
-        st.write(wt_resume) 
+        jd_text = text_jd(clean_jd)
+        
+        overall_score = {}
+        for name , resume in wt_resume.items():
+            overall_score[name] = compute_similarity(resume, jd_text)
+        st.write(overall_score)

@@ -72,12 +72,20 @@ if button and resume_files and jd_input.strip():
         resume_section ={}
         for resume , text in resume_text.items():
             resume_section[resume] = section_maker(text, section_map)
-        st.write(resume_section)
         jd_section = section_maker(jd_input, section_map)
         
         resume_clean = {}   
         for name, sections_list in resume_section.items():
             resume_clean[name] = section_clean(sections_list) 
-            # for text in sections_list:
-            #     resume_clean[name][sections_list] = section_clean(text)
-        st.write(resume_clean)
+        clean_jd = section_clean(jd_section)
+        
+        wt_resume = {}
+        for name, sections in resume_clean.items():
+            sections_dict = {}
+            for key, value in sections.items():
+                if isinstance(value, str):
+                    sections_dict[key] = [value]
+                else:
+                    sections_dict[key] = value
+            wt_resume[name] = resume_weight(sections_dict)
+        st.write(wt_resume) 

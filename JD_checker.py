@@ -67,6 +67,9 @@ if button and resume_files and jd_input.strip():
     else :
         resume_text = {}
         for resume_file in resume_files:
-            text = extract_text(resume_file)
-            resume_text[resume_file.name] = text
-        st.write(resume_text.keys())
+            resume_text[resume_file.name]  = extract_text(resume_file)
+            
+        resume_section ={}
+        for resume , text in resume_text.items():
+            resume_section[resume] = section_maker(text, section_map)
+            

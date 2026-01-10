@@ -11,7 +11,15 @@ def single_resume(resume_files):
     clean_resume = section_clean(resume_section)
     clean_jd = section_clean(jd_section)
     
-    wt_resume = resume_weight(clean_resume)
+    sections_dict = {}
+    for key, value in clean_resume.items():
+        if isinstance(value, str):
+            sections_dict[key] = [value]
+        else:
+            sections_dict[key] = value
+
+    wt_resume = resume_weight(sections_dict)
+
     jd_text = text_jd(clean_jd)
     
     overall_score = compute_similarity(wt_resume, jd_text)

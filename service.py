@@ -2,7 +2,8 @@ import streamlit as st
 import pdfplumber
 from docx import Document
 import re
-
+import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -270,3 +271,16 @@ def evaluate_resume_structure(sections):
         )
 
     return feedback, detected_sections, missing_sections
+
+def bar_chart(final_score):
+    df = pd.DataFrame({
+    "Resume": list(final_score.keys()),
+    "ATS Score": [v * 100 for v in final_score.values()]
+    })
+
+    fig, ax = plt.subplots()
+    ax.barh(df["Resume"], df["ATS Score"])
+    ax.set_xlabel("ATS Score (%)")
+    ax.set_title("Resume Ranking Based on ATS Score")
+
+    st.pyplot(fig)

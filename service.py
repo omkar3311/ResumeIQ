@@ -279,8 +279,20 @@ def bar_chart(final_score):
     })
 
     fig, ax = plt.subplots()
-    ax.barh(df["Resume"], df["ATS Score"])
+    ax.bar(df["Resume"], df["ATS Score"])
     ax.set_xlabel("ATS Score (%)")
     ax.set_title("Resume Ranking Based on ATS Score")
+
+    st.pyplot(fig)
+    
+def skill_match(skill_score):
+    skill_df = pd.DataFrame({
+    "Resume": list(skill_score.keys()),
+    "Skills Match (%)": [v * 100 for v in skill_score.values()]})
+
+    fig, ax = plt.subplots()
+    ax.bar(skill_df["Resume"], skill_df["Skills Match (%)"])
+    ax.set_ylabel("Skills Match (%)")
+    ax.set_title("Skills Match Comparison")
 
     st.pyplot(fig)

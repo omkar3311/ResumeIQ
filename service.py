@@ -321,3 +321,26 @@ def scatter_plot(overall_score,skill_score):
     ax.set_title("Resume Quality Distribution")
 
     st.pyplot(fig)
+
+def ranked_plot(final_score):
+    ranked_resumes = sorted(
+    final_score.items(),
+    key=lambda x: x[1],
+    reverse=True
+    )
+    best_resume, best_score = ranked_resumes[0]
+
+    st.subheader("🏆 Best Candidate")
+    st.success(
+        f"**{best_resume}** is the best match with an ATS Score of **{best_score*100:.2f}%**"
+    )
+    rank_df = pd.DataFrame(
+    ranked_resumes,
+    columns=["Resume", "Final ATS Score"]
+    )
+
+    rank_df["Final ATS Score (%)"] = rank_df["Final ATS Score"] * 100
+    rank_df.index = rank_df.index + 1  # Rank starts from 1
+
+    st.subheader("📊 Candidate Ranking")
+    st.dataframe(rank_df[["Resume", "Final ATS Score (%)"]])

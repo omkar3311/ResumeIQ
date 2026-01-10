@@ -280,7 +280,7 @@ def bar_chart(final_score):
 
     fig, ax = plt.subplots()
     ax.bar(df["Resume"], df["ATS Score"])
-    ax.set_xlabel("ATS Score (%)")
+    ax.set_ylabel("ATS Score (%)")
     ax.set_title("Resume Ranking Based on ATS Score")
 
     st.pyplot(fig)
@@ -322,7 +322,7 @@ def scatter_plot(overall_score,skill_score):
 
     st.pyplot(fig)
 
-def ranked_plot(final_score):
+def ranked_plot(final_score,skill_score):
     ranked_resumes = sorted(
     final_score.items(),
     key=lambda x: x[1],
@@ -334,13 +334,17 @@ def ranked_plot(final_score):
     st.success(
         f"**{best_resume}** is the best match with an ATS Score of **{best_score*100:.2f}%**"
     )
-    rank_df = pd.DataFrame(
-    ranked_resumes,
-    columns=["Resume", "Final ATS Score"]
-    )
+    table_data = []
 
-    rank_df["Final ATS Score (%)"] = rank_df["Final ATS Score"] * 100
-    rank_df.index = rank_df.index + 1  # Rank starts from 1
+    for rank, (resume, final) in enumerate(ranked_resumes, start=1):
+        table_data.append({
+            "Rank": rank,
+            "Resume": resume,
+            "Skills Match (%)": round(skill_score[resume] * 100, 3),
+            "Final ATS Score (%)": round(final * 100, 3)
+        })
 
-    st.subheader("📊 Candidate Ranking")
-    st.dataframe(rank_df[["Resume", "Final ATS Score (%)"]])
+    rank_df = pd.DataFrame(table_data)
+
+    st.subheader("📊 Candidate Ranking Table")
+    st.dataframe(rank_df, use_container_width=True)

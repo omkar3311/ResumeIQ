@@ -322,7 +322,7 @@ def scatter_plot(overall_score,skill_score):
 
     st.pyplot(fig)
 
-def ranked_plot(final_score,skill_score):
+def ranked_plot(final_score,skill_score,overall_score):
     ranked_resumes = sorted(
     final_score.items(),
     key=lambda x: x[1],
@@ -334,6 +334,15 @@ def ranked_plot(final_score,skill_score):
     st.success(
         f"**{best_resume}** is the best match with an ATS Score of **{best_score*100:.2f}%**"
     )
+    st.subheader("🧠 Why This Candidate Wins")
+
+    st.write(f"""
+    **{best_resume}** ranks highest because:
+    - Strong skills alignment
+    - Better overall resume structure
+    - Higher semantic similarity with the Job Description
+    """)
+
     table_data = []
 
     for rank, (resume, final) in enumerate(ranked_resumes, start=1):
@@ -341,6 +350,7 @@ def ranked_plot(final_score,skill_score):
             "Rank": rank,
             "Resume": resume,
             "Skills Match (%)": round(skill_score[resume] * 100, 3),
+            "Overall Match (%)": round(overall_score[resume]*100, 3),
             "Final ATS Score (%)": round(final * 100, 3)
         })
 

@@ -1,7 +1,7 @@
 import streamlit as st
 from service import extract_text,section_map,count_projects, section_maker, ats_score
 
-st.title("📄 ATS Resume Checker (Rule-Based)")
+st.title("📄 ATS Resume Checker")
 st.caption(
     "Note: This ATS analysis is based on automated parsing. In some cases, well-formatted information "
     "may not be detected due to layout, styling, or section naming differences."

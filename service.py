@@ -32,9 +32,12 @@ def section_clean(sections):
         sections[key] = clean_text(" ".join(value))
     return sections
 def compute_similarity(resume, jd):
-    vectorizer = TfidfVectorizer()
-    vectors = vectorizer.fit_transform([resume, jd])
-    return cosine_similarity(vectors[0], vectors[1])[0][0]
+    try:
+        vectorizer = TfidfVectorizer()
+        vectors = vectorizer.fit_transform([resume, jd])
+        return cosine_similarity(vectors[0], vectors[1])[0][0]
+    except ValueError:
+        return 0.0
 
 def section_maker(text,section_map):
     lines = text.splitlines()
@@ -279,9 +282,19 @@ def bar_chart(final_score):
     })
 
     fig, ax = plt.subplots()
-    ax.bar(df["Resume"], df["ATS Score"])
+    bars = ax.barh(df["Resume"], df["ATS Score"])
     ax.set_ylabel("ATS Score (%)")
     ax.set_title("Resume Ranking Based on ATS Score")
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(
+            width + 1,
+            bar.get_y() + bar.get_height() / 2,
+            f"{width:.1f}%",
+            va="center",
+            fontsize=10,
+            fontweight="bold"
+        )
 
     st.pyplot(fig)
     
@@ -291,9 +304,19 @@ def skill_match(skill_score):
     "Skills Match (%)": [v * 100 for v in skill_score.values()]})
 
     fig, ax = plt.subplots()
-    ax.bar(skill_df["Resume"], skill_df["Skills Match (%)"])
+    bars = ax.barh(skill_df["Resume"], skill_df["Skills Match (%)"])
     ax.set_ylabel("Skills Match (%)")
     ax.set_title("Skills Match Comparison")
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(
+            width + 1,
+            bar.get_y() + bar.get_height() / 2,
+            f"{width:.1f}%",
+            va="center",
+            fontsize=10,
+            fontweight="bold"
+        )
 
     st.pyplot(fig)
 

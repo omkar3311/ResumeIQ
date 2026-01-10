@@ -5,7 +5,7 @@ from service import  extract_text, clean_text, section_clean, compute_similarity
 from service import resume_weight, ai_feedback, normalize_skills, section_map , text_jd
 from service import bar_chart, skill_match, scatter_plot,ranked_plot
 
-def single_resume(resume_files):
+def single_resume(resume_files,jd_input):
     resume_text = extract_text(resume_files[0])
     resume_section = section_maker(resume_text, section_map)
     jd_section = section_maker(jd_input, section_map)
@@ -62,7 +62,8 @@ def single_resume(resume_files):
         st.error(verdict)
     st.write(feedback_text)
 
-def multi_resume(resume_files):
+def multi_resume(resume_files,jd_input):
+    
     resume_text = {}
     for resume_file in resume_files:
         resume_text[resume_file.name]  = extract_text(resume_file)
@@ -109,19 +110,33 @@ def multi_resume(resume_files):
     bar_chart(final_score)
     skill_match(skill_score)
     scatter_plot(overall_score,skill_score)
-    
-st.caption(
-    "Disclaimer: This ATS score is generated using automated text analysis and semantic matching. "
-    "Results may vary depending on resume formatting, section labeling, and content clarity. "
-    "The output is intended to support screening decisions, not replace human evaluation."
-)
 
-resume_files = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"], accept_multiple_files = True )
-jd_input = st.text_area("Paste Job Description",height=250)
-button = st.button("upload")
+def JD():
+    st.title("📄 Job Description Checker")
+    st.caption(
+        "Disclaimer: This ATS score is generated using automated text analysis and semantic matching. "
+        "Results may vary depending on resume formatting, section labeling, and content clarity. "
+        "The output is intended to support screening decisions, not replace human evaluation."
+    )
 
-if button and resume_files and jd_input.strip():
-    if len(resume_files) == 1 :
-        single_resume(resume_files)
-    else :
-        multi_resume(resume_files)
+    resume_files = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"], accept_multiple_files = True )
+    jd_input = st.text_area("Paste Job Description",height=250)
+    button = st.button("upload")
+
+    if button and resume_files and jd_input.strip():
+        if len(resume_files) == 1 :
+            single_resume(resume_files,jd_input)
+        else :
+            multi_resume(resume_files,jd_input)
+            
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("🏠 Home"):
+            st.session_state["page"] = "home"
+            st.rerun()
+
+    with col2:
+        if st.button("🤖  ATS checker"):
+            st.session_state["page"] = "ats"
+            st.rerun()

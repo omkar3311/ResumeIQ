@@ -1,6 +1,10 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 from service import  extract_text, clean_text, section_clean, compute_similarity, section_maker
 from service import resume_weight, ai_feedback, normalize_skills, section_map , text_jd
+from service import bar_chart
+
 
 def single_resume(resume_files):
     resume_text = extract_text(resume_files[0])
@@ -104,8 +108,12 @@ def multi_resume(resume_files):
     for name ,value in skill_score.items():
         final_score[name] = (0.6 * skill_score[name]) + (0.4 * overall_score[name])
     st.write(final_score)
+    df = pd.DataFrame({
+        "Resume": list(final_score.keys()),
+        "ATS Score": [v * 100 for v in final_score.values()]
+    })
 
-st.title("Resume Screening System (ATS Prototype)")
+    bar_chart(final_score)
 
 resume_files = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"], accept_multiple_files = True )
 jd_input = st.text_area("Paste Job Description",height=250)

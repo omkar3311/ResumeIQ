@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from service import  extract_text, clean_text, section_clean, compute_similarity, section_maker
 from service import resume_weight, ai_feedback, normalize_skills, section_map , text_jd
-from service import bar_chart, skill_match
+from service import bar_chart, skill_match, scatter_plot
 
 
 def single_resume(resume_files):
@@ -115,6 +115,7 @@ def multi_resume(resume_files):
 
     bar_chart(final_score)
     skill_match(skill_score)
+    scatter_plot(overall_score,skill_score)
 
 resume_files = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"], accept_multiple_files = True )
 jd_input = st.text_area("Paste Job Description",height=250)

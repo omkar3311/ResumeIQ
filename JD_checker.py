@@ -5,10 +5,8 @@ from service import  extract_text, clean_text, section_clean, compute_similarity
 from service import resume_weight, ai_feedback, normalize_skills, section_map , text_jd
 from service import bar_chart, skill_match, scatter_plot,ranked_plot
 
-
 def single_resume(resume_files):
     resume_text = extract_text(resume_files[0])
-    
     resume_section = section_maker(resume_text, section_map)
     jd_section = section_maker(jd_input, section_map)
     
@@ -105,13 +103,9 @@ def multi_resume(resume_files):
     
     final_score = {}
     for name ,value in skill_score.items():
-        final_score[name] = (0.6 * skill_score[name]) + (0.5 * overall_score[name])
-    df = pd.DataFrame({
-        "Resume": list(final_score.keys()),
-        "ATS Score": [v * 100 for v in final_score.values()]
-    })
+        final_score[name] = (0.6 * skill_score[name]) + (0.4 * overall_score[name])
 
-    ranked_plot(final_score, skill_score)
+    ranked_plot(final_score, skill_score,overall_score)
     bar_chart(final_score)
     skill_match(skill_score)
     scatter_plot(overall_score,skill_score)

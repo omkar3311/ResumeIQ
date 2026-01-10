@@ -109,6 +109,12 @@ def multi_resume(resume_files):
     bar_chart(final_score)
     skill_match(skill_score)
     scatter_plot(overall_score,skill_score)
+    
+st.caption(
+    "Disclaimer: This ATS score is generated using automated text analysis and semantic matching. "
+    "Results may vary depending on resume formatting, section labeling, and content clarity. "
+    "The output is intended to support screening decisions, not replace human evaluation."
+)
 
 resume_files = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"], accept_multiple_files = True )
 jd_input = st.text_area("Paste Job Description",height=250)

@@ -34,7 +34,7 @@ This is perfect if you want to tailor your resume for specific jobs and improve 
 
 ## 📂 Repository Structure
 
-bash ```
+```bash
 ResumeIQ/
 ├── ATS_checker.py # ATS scoring logic
 ├── JD_checker.py # JD vs Resume comparative logic

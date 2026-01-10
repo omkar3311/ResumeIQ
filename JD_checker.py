@@ -102,21 +102,19 @@ def multi_resume(resume_files):
     skill_score = {}
     for name , skill in resume_skills.items():
         skill_score[name] = compute_similarity(skill, jd_skills_text) if skill and jd_skills_text else 0.0
-    st.write(skill_score)
     
     final_score = {}
     for name ,value in skill_score.items():
-        final_score[name] = (0.6 * skill_score[name]) + (0.4 * overall_score[name])
-    st.write(final_score)
+        final_score[name] = (0.6 * skill_score[name]) + (0.5 * overall_score[name])
     df = pd.DataFrame({
         "Resume": list(final_score.keys()),
         "ATS Score": [v * 100 for v in final_score.values()]
     })
 
+    ranked_plot(final_score, skill_score)
     bar_chart(final_score)
     skill_match(skill_score)
     scatter_plot(overall_score,skill_score)
-    ranked_plot(final_score)
 
 resume_files = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"], accept_multiple_files = True )
 jd_input = st.text_area("Paste Job Description",height=250)

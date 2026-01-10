@@ -296,3 +296,28 @@ def skill_match(skill_score):
     ax.set_title("Skills Match Comparison")
 
     st.pyplot(fig)
+
+def scatter_plot(overall_score,skill_score):
+    scatter_df = pd.DataFrame({
+    "Resume": list(overall_score.keys()),
+    "Overall Match": [v * 100 for v in overall_score.values()],
+    "Skills Match": [skill_score[k] * 100 for k in overall_score]
+    })
+
+    fig, ax = plt.subplots()
+    ax.scatter(
+        scatter_df["Overall Match"],
+        scatter_df["Skills Match"]
+    )
+
+    for i, name in enumerate(scatter_df["Resume"]):
+        ax.annotate(name, (
+            scatter_df["Overall Match"][i],
+            scatter_df["Skills Match"][i]
+        ))
+
+    ax.set_xlabel("Overall Match (%)")
+    ax.set_ylabel("Skills Match (%)")
+    ax.set_title("Resume Quality Distribution")
+
+    st.pyplot(fig)
